@@ -27,6 +27,28 @@ const showData = (data) => {
             )
             .join('')}
     </ul>`;
+
+    if (data.prev || data.next) {
+        more.innerHTML = `
+    ${
+        data.prev
+            ? `<button onclick="getMoreSongs('${data.prev}')" class="btn">Prev</button>`
+            : ''
+    }
+    ${
+        data.next
+            ? `<button onclick="getMoreSongs('${data.next}')" class="btn">Next</button>`
+            : ''
+    }
+    `;
+    }
+};
+
+// Get prev / next page of results
+const getMoreSongs = async (url) => {
+    res = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+    data = await res.json();
+    showData(data);
 };
 
 form.addEventListener('submit', (e) => {
