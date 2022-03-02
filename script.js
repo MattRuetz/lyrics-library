@@ -6,7 +6,7 @@ const more = document.getElementById('more');
 const apiURL = 'https://api.lyrics.ovh';
 
 const searchSongs = async (term) => {
-    data = await (await fetch(`${apiURL}/suggest/${term}`)).json();
+    const data = await (await fetch(`${apiURL}/suggest/${term}`)).json();
     showData(data);
 };
 
@@ -19,7 +19,7 @@ const showData = (data) => {
                 (song) => `
         <li>
             <span><strong>${song.artist.name}</strong> - ${song.title}</span>
-            <button class="btn" data-artist="${song.artist.name} data-songtitle="${song.title}" >
+            <button class="btn" data-artist="${song.artist.name}" data-songTitle="${song.title}" >
                 Get Lyrics
             </button>
         </li>
@@ -45,10 +45,25 @@ const showData = (data) => {
 };
 
 // Get prev / next page of results
+// REQUIRES CORS ANYWHERE
 const getMoreSongs = async (url) => {
-    res = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
-    data = await res.json();
+    const res = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+    const data = await res.json();
     showData(data);
+};
+
+const getLyrics = async (artist, songTitle) => {
+    const data = await (
+        await fetch(`${apiURL}/v1/${artist}/${songTitle}`)
+    ).json();
+
+    // replace \r & \n with HTML line breaks for proper display
+    const lyrics = data.lyrics.replace(/(\r\n|\r|\n)/g, '<br>');
+
+    result.innerHTML = `<h2><strong>${artist}</strong> - ${songTitle}</h2>
+    <span>${lyrics}</span>`;
+
+    more.innerHTML = '';
 };
 
 form.addEventListener('submit', (e) => {
@@ -59,5 +74,16 @@ form.addEventListener('submit', (e) => {
         alert('Enter a search term!');
     } else {
         searchSongs(searchTerm);
+    }
+});
+
+result.addEventListener('click', (e) => {
+    const clickedEl = e.target;
+
+    if (clickedEl.tagName === 'BUTTON') {
+        const artist = clickedEl.getAttribute('data-artist');
+        const songTitle = clickedEl.getAttribute('data-songTitle');
+
+        getLyrics(artist, songTitle);
     }
 });
