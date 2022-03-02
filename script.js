@@ -3,8 +3,10 @@ const search = document.getElementById('search');
 const result = document.getElementById('result');
 const more = document.getElementById('more');
 
+// Base URI for API
 const apiURL = 'https://api.lyrics.ovh';
 
+// Fetch songs matching search term
 const searchSongs = async (term) => {
     const data = await (await fetch(`${apiURL}/suggest/${term}`)).json();
     showData(data);
@@ -52,6 +54,7 @@ const getMoreSongs = async (url) => {
     showData(data);
 };
 
+// Fetch lyrics and add to DOM
 const getLyrics = async (artist, songTitle) => {
     const data = await (
         await fetch(`${apiURL}/v1/${artist}/${songTitle}`)
@@ -66,6 +69,7 @@ const getLyrics = async (artist, songTitle) => {
     more.innerHTML = '';
 };
 
+// Handle search button press
 form.addEventListener('submit', (e) => {
     e.preventDefault();
     const searchTerm = search.value.trim();
@@ -77,6 +81,7 @@ form.addEventListener('submit', (e) => {
     }
 });
 
+// Handle Get Lyrics button for certain song
 result.addEventListener('click', (e) => {
     const clickedEl = e.target;
 
